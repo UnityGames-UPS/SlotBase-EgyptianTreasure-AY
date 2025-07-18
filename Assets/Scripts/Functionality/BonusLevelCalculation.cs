@@ -26,7 +26,7 @@ public class BonusLevelCalculation : MonoBehaviour
     List<int> randomIndex = new List<int>();
     internal bool WaitForBonusResult = true;
 
-
+    bool canOpenNexttrue;
     private double totalWin = 0;
 
 
