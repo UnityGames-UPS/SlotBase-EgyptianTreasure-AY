@@ -323,7 +323,7 @@ public class UIManager : MonoBehaviour
             if (Pagination_Text) Pagination_Text.text = paginationCounter + "  3";
         }
     }
-    internal void InitialiseUIData(string SupportUrl, string AbtImgUrl, string TermsUrl, string PrivacyUrl, Paylines symbolsText)
+    internal void InitialiseUIData( Paylines symbolsText)
     {
         PopulateSymbolsPayout(symbolsText);
     }
@@ -332,38 +332,38 @@ public class UIManager : MonoBehaviour
     {
         for (int i = 0; i < SymbolsText.Length; i++)
         {
-            switch (paylines.symbols[i].Name)
+            switch (paylines.symbols[i].name)
             {
                 case "0":
                     string text = null;
-                    if (paylines.symbols[i].Multiplier[0][0] != 0)
+                    if (paylines.symbols[i].multiplier[0] != 0)
                     {
-                        text += "5x - " + paylines.symbols[i].Multiplier[0][0]+"x";
+                        text += "5x - " + paylines.symbols[i].multiplier[0]+"x";
                     }
-                    if (paylines.symbols[i].Multiplier[1][0] != 0)
+                    if (paylines.symbols[i].multiplier[1] != 0)
                     {
-                        text += "\n4x - " + paylines.symbols[i].Multiplier[1][0] + "x";
+                        text += "\n4x - " + paylines.symbols[i].multiplier[1] + "x";
                     }
-                    if (paylines.symbols[i].Multiplier[2][0] != 0)
+                    if (paylines.symbols[i].multiplier[2] != 0)
                     {
-                        text += "\n3x - " + paylines.symbols[i].Multiplier[2][0] + "x";
+                        text += "\n3x - " + paylines.symbols[i].multiplier[2] + "x";
                     }
                     if (SymbolsText[0]) SymbolsText[0].text = text;
                     if (SymbolsText[1]) SymbolsText[1].text = text;
                     break;
                 case "4":
                     text = null;
-                    if (paylines.symbols[i].Multiplier[0][0] != 0)
+                    if (paylines.symbols[i].multiplier[0] != 0)
                     {
-                        text += "5x - " + paylines.symbols[i].Multiplier[0][0] + "x";
+                        text += "5x - " + paylines.symbols[i].multiplier[0] + "x";
                     }
-                    if (paylines.symbols[i].Multiplier[1][0] != 0)
+                    if (paylines.symbols[i].multiplier[1] != 0)
                     {
-                        text += "\n4x - " + paylines.symbols[i].Multiplier[1][0] + "x";
+                        text += "\n4x - " + paylines.symbols[i].multiplier[1] + "x";
                     }
-                    if (paylines.symbols[i].Multiplier[2][0] != 0)
+                    if (paylines.symbols[i].multiplier[2] != 0)
                     {
-                        text += "\n3x - " + paylines.symbols[i].Multiplier[2][0] + "x";
+                        text += "\n3x - " + paylines.symbols[i].multiplier[2] + "x";
                     }
                     if (SymbolsText[2]) SymbolsText[2].text = text;
                     if (SymbolsText[3]) SymbolsText[3].text = text;
@@ -375,13 +375,14 @@ public class UIManager : MonoBehaviour
 
         for (int i = 0; i < paylines.symbols.Count; i++)
         {
-            if (paylines.symbols[i].Name.ToUpper() == "BONUS")
+            if (paylines.symbols[i].name.ToUpper() == "BONUS")
             {
                 if (BonusDesc_text) BonusDesc_text.text = paylines.symbols[i].description.ToString();
             }
-            if (paylines.symbols[i].Name.ToUpper() == "JACKPOT")
+            if (paylines.symbols[i].name.ToUpper() == "JACKPOT")
             {
-                if (SymbolsText[6]) SymbolsText[6].text = "Mega win triggered by 5 Jackpot symbols appearing anywhere on the result matrix. Payout: " + paylines.symbols[i].defaultPayout.ToString() + "x";
+                if (SymbolsText[6]) SymbolsText[6].text = paylines.symbols[i].description.ToString();
+                // if (SymbolsText[6]) SymbolsText[6].text = "Mega win triggered by 5 Jackpot symbols appearing anywhere on the result matrix. Payout: " + paylines.symbols[i].defaultPayout.ToString() + "x";
             }
         }
     }

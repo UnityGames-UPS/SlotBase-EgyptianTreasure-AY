@@ -9,6 +9,7 @@ public class CardFlip : MonoBehaviour
     [SerializeField] internal Sprite cardImage;
     [SerializeField] internal Button Card_Button;
 
+    [SerializeField] private SocketIOManager SocketManager;
     [SerializeField] private GambleController gambleController;
 
     private RectTransform Card_transform;
@@ -35,15 +36,20 @@ public class CardFlip : MonoBehaviour
 
     private void FlipMainCard()
     {
+        gambleController.ToggleCardButton();
         StartCoroutine(FlipMainObject());
     }
 
     private IEnumerator FlipMainObject()
     {
-        gambleController.RunOnCollect();
-        yield return new WaitUntil(() => gambleController.isResult);
+        //gambleController.RunOnCollect();
+
+        SocketManager.GambleDraw();
+        yield return new WaitUntil(() => SocketManager.isResultdone);
+        gambleController.ComputeCards(); // Compute card sprites
         cardImage = gambleController.GetCard();
         FlipMyObject();
+        yield return null;
     }
 
     private void changeSprite()

@@ -10,324 +10,146 @@ using System.Linq;
 public class BonusLevelCalculation : MonoBehaviour
 {
 
-    [SerializeField] private SocketIOManager socketmanager;
+    [SerializeField] private Button[] btn;
+    [SerializeField] private TMP_Text[] textList;
+    [SerializeField] private TMP_Text TotalText;
 
-    List<List<int>> Platform_List = new List<List<int>>()
+    [SerializeField] private GameObject RayCast_Panel;
+
+    //[SerializeField] private List<double> result = new List<double>();
+    // [SerializeField] private List<Button> tempButtonList = new List<Button>();
+    int counter = 0;
+    [SerializeField] private GameObject bonusGame;
+    [SerializeField] private SlotBehaviour slotBehaviour;
+    [SerializeField] private AudioController audioManager;
+    [SerializeField] private SocketIOManager SocketManager;
+    List<int> randomIndex = new List<int>();
+    internal bool WaitForBonusResult = true;
+
+
+    private double totalWin = 0;
+
+
+    void Start()
     {
-        new List<int>(), 
-        new List<int>(), 
-        new List<int>()  
-    };
-    [SerializeField]
-    private GameObject[] Prize_Columns;
-    [SerializeField]
-    private TMP_Text[] Prize_Texts;
-    [SerializeField]
-    private Button[] Prize_Buttons;
-    [SerializeField]
-    private GameObject[] LeftArr_Objects;
-    [SerializeField]
-    private GameObject[] RightArr_Objects;
-    [SerializeField]
-    private GameObject SunLogoNormal;
-    [SerializeField]
-    private GameObject SunLogoFadeIn;
-    [SerializeField]
-    private GameObject SunLogoFadeOut;
-    [SerializeField]
-    private Sprite[] Initial_Sprites;
-    [SerializeField]
-    private Sprite GameOverSPrite;
-    [SerializeField]
-    private TMP_Text totalWinText;
-    [SerializeField]
-    private TMP_Text multiplierText;
-    [SerializeField]
-    private GameObject bonusGame;
-    [SerializeField]
-    private SlotBehaviour slotBehaviour;
-    [SerializeField]
-    private GameObject Raycast_Object;
-    private int arrowNum = 2;
-    private int boxesOpened = 0;
-    private float multiplier = 0;
-    private double currentbet;
-    [SerializeField]
-    private AudioController audiocontroller;
-
-    Coroutine SunRoutine = null;
-
-    [SerializeField] private List<int> result_num;
-    internal bool gameOn;
-
-    private void Start()
-    {
-        for (int i = 8; i > 4; i--)
+        for (int i = 0; i < btn.Length; i++)
         {
-            if (Prize_Buttons[i]) Prize_Buttons[i].interactable = true;
-        }
-        if (LeftArr_Objects[arrowNum]) LeftArr_Objects[arrowNum].SetActive(true);
-        if (RightArr_Objects[arrowNum]) RightArr_Objects[arrowNum].SetActive(true);
-
-        if (SunLogoNormal) SunLogoNormal.SetActive(true);
-        if (SunLogoFadeOut) SunLogoFadeOut.SetActive(false);
-        if (SunLogoFadeIn) SunLogoFadeIn.SetActive(false);
-
-        for (int i = 0; i < Prize_Buttons.Length; i++)
-        {
-            int j = i;
-            Prize_Buttons[i].onClick.RemoveAllListeners();
-            Prize_Buttons[i].onClick.AddListener(delegate { CheckBox(j); });
+            int index = i;
+            if (btn[index]) btn[index].onClick.RemoveAllListeners();
+            if (btn[index]) btn[index].onClick.AddListener(delegate { OnSelectGrave(btn[index],  textList[index], index); });
         }
     }
 
-    internal void BonusinitialSetup(List<string> bonusList)
+    internal void StartBonusGame()
     {
-        for (int i = 0; i < bonusList.Count; i++)
-        {
-            Platform_List[i] = bonusList[i]?.Split(',')?.Select(Int32.Parse)?.ToList();
-        }
-    }
-
-    private IEnumerator SunLogoRoutine()
-    {
-        bool isSun = true;
-        while (true)
-        {
-            isSun = !isSun;
-            if (isSun)
-            {
-                if (SunLogoNormal) SunLogoNormal.SetActive(false);
-                if (SunLogoFadeOut) SunLogoFadeOut.SetActive(true);
-                if (multiplierText) multiplierText.gameObject.SetActive(true);
-                yield return new WaitForSeconds(0.3f);
-                if (SunLogoFadeOut) SunLogoFadeOut.SetActive(false);
-            }
-            else
-            {
-                if (SunLogoFadeIn) SunLogoFadeIn.SetActive(true);
-                yield return new WaitForSeconds(0.3f);
-                if (multiplierText) multiplierText.gameObject.SetActive(true);
-                if (SunLogoFadeIn) SunLogoFadeIn.SetActive(false);
-                if (SunLogoNormal) SunLogoNormal.SetActive(true);
-            }
-            yield return new WaitForSeconds(3);
-        }
-    }
-
-    internal void startGame(List<int> result, double currenBet)
-    {
-        if (audiocontroller) audiocontroller.SwitchBGSound(true);
-        if (SunRoutine != null)
-        {
-            StopCoroutine(SunRoutine);
-            SunRoutine = null;
-        }
-        SunRoutine = StartCoroutine(SunLogoRoutine());
-        result_num.Clear();
-        result_num.TrimExcess();
-        currentbet = currenBet;
-        result_num = result;
-
-        gameOn = true;
+        if (audioManager) audioManager.SwitchBGSound(true);
+        if (RayCast_Panel) RayCast_Panel.SetActive(false);
+        totalWin = 0;
+        TotalText.text = "";
+        Initialize();
         bonusGame.SetActive(true);
-        for (int i = 8; i > 4; i--)
-        {
-            if (Prize_Buttons[i]) Prize_Buttons[i].interactable = true;
-        }
-        if (LeftArr_Objects[arrowNum]) LeftArr_Objects[arrowNum].SetActive(true);
-        if (RightArr_Objects[arrowNum]) RightArr_Objects[arrowNum].SetActive(true);
-
-        if (SunLogoNormal) SunLogoNormal.SetActive(true);
-        if (SunLogoFadeOut) SunLogoFadeOut.SetActive(false);
-        if (SunLogoFadeIn) SunLogoFadeIn.SetActive(false);
+        //result.Clear();
+        //result = bonusResult;
+        //Debug.Log("bonus result in bonus game: ," + JsonConvert.SerializeObject(result));
     }
 
-    private void CheckBox(int num)
+    IEnumerator resetgame(GameObject obj)
     {
-        if (!gameOn)
-        {
-            return;
-        }
-
-        Debug.Log("check game on " + num);
-        if (Raycast_Object) Raycast_Object.SetActive(true);
-        if (Prize_Columns[num]) Prize_Columns[num].GetComponent<ImageAnimation>().StartAnimation();
-        if (Prize_Buttons[num]) Prize_Buttons[num].interactable = false;
-        if (audiocontroller) audiocontroller.PlayBonusAudio("rock");
-        DOVirtual.DelayedCall(0.3f, () =>
-        {
-            OpenOtherBoxes(num);
-        });
-        DOVirtual.DelayedCall(0.5f, () =>
-        {
-            int myResult = Platform_List[boxesOpened][result_num[boxesOpened]];
-            if (myResult != 0)
-            {
-                if (Prize_Columns[num]) Prize_Columns[num].SetActive(false);
-                
-                Prize_Texts[num].text = (myResult*socketmanager.initialData.Bets[slotBehaviour.BetCounter]).ToString("f3");
-                Prize_Texts[num].gameObject.SetActive(true);
-                totalWinText.text = (double.Parse(totalWinText.text) + (currentbet * myResult)).ToString("f3");
-                if (currentbet != 0)
-                {
-                    multiplier += myResult;
-                    multiplierText.text = "X" + multiplier + "\n" + "MULTIPLIED";
-                }
-            }
-            else
-            {
-                if (audiocontroller) audiocontroller.PlayBonusAudio("lose");
-                Prize_Columns[num].SetActive(true);
-                Prize_Columns[num].GetComponent<Image>().sprite = GameOverSPrite;
-                Prize_Texts[num].text = "Game Over";
-            }
-            boxesOpened++;
-            if (myResult == 0 || boxesOpened >= 3)
-            {
-                gameOn = false;
-                foreach (var item in Prize_Buttons)
-                {
-                    item.interactable = false;
-                }
-                Invoke("GameOver", 3f);
-            }
-            else
-            {
-                if (boxesOpened == 1)
-                {
-                    for (int i = 8; i > 4; i--)
-                    {
-                        if (Prize_Buttons[i]) Prize_Buttons[i].interactable = false;
-                    }
-                    NextLineUp(1);
-                }
-                else if (boxesOpened == 2)
-                {
-                    for (int i = 4; i > 1; i--)
-                    {
-                        if (Prize_Buttons[i]) Prize_Buttons[i].interactable = false;
-                    }
-                    NextLineUp(0);
-                }
-            }
-            if (Raycast_Object) Raycast_Object.SetActive(false);
-        });
-    }
-
-    private void OpenOtherBoxes(int num)
-    {
-        int uppervalue = 0;
-        int lowervalue = 0;
-        switch (boxesOpened)
-        {
-            case 0:
-                uppervalue = 8;
-                lowervalue = 4;
-                break;
-            case 1:
-                uppervalue = 4;
-                lowervalue = 1;
-                break;
-            case 2:
-                uppervalue = 1;
-                lowervalue = -1;
-                break;
-        }
-
-        int k = 0;
-        for (int i = uppervalue; i > lowervalue; i--)
-        {
-            if (i != num)
-            {
-                if (Platform_List[boxesOpened][result_num[boxesOpened]] == Platform_List[boxesOpened][k])
-                {
-                    k++;
-                }
-                int myResult = Platform_List[boxesOpened][k];
-                if (Prize_Columns[i]) Prize_Columns[i].GetComponent<ImageAnimation>().StartAnimation();
-                if (Prize_Buttons[i]) Prize_Buttons[i].interactable = false;
-                StartCoroutine(TransitionBox(myResult, i));
-                k++;
-            }
-        }
-    }
-
-    private IEnumerator TransitionBox(int myResult, int i)
-    {
-        yield return new WaitForSeconds(0.5f);
-        if (myResult != 0)
-        {
-            if (Prize_Columns[i]) Prize_Columns[i].SetActive(false);
-            Prize_Texts[i].text = (myResult * socketmanager.initialData.Bets[slotBehaviour.BetCounter]).ToString("f3");
-            Prize_Texts[i].gameObject.SetActive(true);
-        }
-        else
-        {
-            Prize_Columns[i].SetActive(true);
-            Prize_Columns[i].GetComponent<Image>().sprite = GameOverSPrite;
-            Prize_Texts[i].text = "Game Over";
-        }
-    }
-
-    private void NextLineUp(int line)
-    {
-        if (line == 1)
-        {
-            for (int i = 4; i > 1; i--)
-            {
-                if (Prize_Buttons[i]) Prize_Buttons[i].interactable = true;
-            }
-        }
-        else
-        {
-            for (int i = 1; i > -1; i--)
-            {
-                if (Prize_Buttons[i]) Prize_Buttons[i].interactable = true;
-            }
-        }
-        if (LeftArr_Objects[arrowNum]) LeftArr_Objects[arrowNum].SetActive(false);
-        if (RightArr_Objects[arrowNum]) RightArr_Objects[arrowNum].SetActive(false);
-        arrowNum--;
-        if (LeftArr_Objects[arrowNum]) LeftArr_Objects[arrowNum].SetActive(true);
-        if (RightArr_Objects[arrowNum]) RightArr_Objects[arrowNum].SetActive(true);
-    }
-
-    void GameOver()
-    {
-        totalWinText.text = "0";
-        arrowNum = 2;
-        multiplierText.text = "X 0"+ "\n" + "MULTIPLIED";
-        multiplier = 0;
-        for (int i = 0; i < Prize_Columns.Length; i++)
-        {
-            Prize_Columns[i].SetActive(true);
-            ImageAnimation temp = Prize_Columns[i].GetComponent<ImageAnimation>();
-            temp.StopAnimation();
-            temp.rendererDelegate.sprite = Initial_Sprites[i];
-            Prize_Texts[i].gameObject.SetActive(false);
-            Prize_Buttons[i].interactable = false;
-            if (i > 4)
-            {
-                Prize_Buttons[i].interactable = true;
-            }
-        }
-
-        for (int i = 0; i < LeftArr_Objects.Length; i++)
-        {
-            LeftArr_Objects[i].SetActive(false);
-            RightArr_Objects[i].SetActive(false);
-        }
-        if (LeftArr_Objects[arrowNum]) LeftArr_Objects[arrowNum].SetActive(true);
-        if (RightArr_Objects[arrowNum]) RightArr_Objects[arrowNum].SetActive(true);
-        boxesOpened = 0;
+        yield return new WaitForSeconds(2f);
+        totalWin = 0;
+        if (audioManager) audioManager.SwitchBGSound(false);
+        slotBehaviour.updateBalance();
         bonusGame.SetActive(false);
-        if (audiocontroller) audiocontroller.SwitchBGSound(false);
-        if (SunRoutine != null)
-        {
-            StopCoroutine(SunRoutine);
-            SunRoutine = null;
-        }
-        slotBehaviour.CheckWinPopups();
+        slotBehaviour.CheckPopups = false;
+        obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y +0.5f, obj.transform.position.z);
     }
+
+    private void Initialize()
+    {
+        randomIndex.Clear();
+        counter = 0;
+        totalWin = 0;
+        foreach (var item in btn)
+        {
+            item.interactable = true;
+            item.gameObject.SetActive(true);
+        }
+
+        foreach (var item in textList)
+        {
+            item.text = "";
+            item.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            item.gameObject.SetActive(false);
+        }
+
+    }
+
+    void OnSelectGrave(Button btn, TMP_Text text, int graveNo)
+    {
+        if (RayCast_Panel) RayCast_Panel.SetActive(true);
+      
+        StartCoroutine(DisplayBonusResult(btn, text, graveNo));
+    }
+
+    IEnumerator DisplayBonusResult(Button btn,  TMP_Text text, int graveNo)
+    {
+        
+        SocketManager.OnBonusCollect(graveNo);
+        StartCoroutine(PlayShakeAnimation(btn.gameObject));
+        yield return new WaitUntil(() => SocketManager.isResultdone);
+
+        if (SocketManager.bonusData.payload.payout == 0)
+        {
+            SocketManager.ResultData.payload.winAmount = SocketManager.bonusData.payload.winAmount;
+            if (audioManager) audioManager.PlayBonusAudio("lose");
+            
+            text.gameObject.SetActive(true);
+            text.text = "GAME OVER";
+            text.gameObject.transform.position = new Vector3(text.gameObject.transform.position.x, text.gameObject.transform.position.y - 0.5f, text.gameObject.transform.position.z);
+            text.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            btn.gameObject.SetActive(false);
+
+
+            StartCoroutine(resetgame(text.gameObject));
+            yield break;
+        }
+        if (audioManager) audioManager.PlayBonusAudio("win");
+      
+
+        double value = SocketManager.bonusData.payload.winAmount;
+        text.text = "+" + value.ToString("0.000");
+        
+        totalWin = totalWin+ value;
+        TotalText.text = totalWin.ToString("0.000");
+
+        
+        text.gameObject.SetActive(true);
+        btn.gameObject.SetActive(false);
+        
+
+      
+        if (RayCast_Panel) RayCast_Panel.SetActive(false);
+    }
+
+
+    IEnumerator PlayShakeAnimation(GameObject obj)
+    {
+        Vector3 originalPos = obj.transform.localPosition;
+        float shakeAmount = 5f;
+        float shakeSpeed = 50f;
+
+        while (!SocketManager.isResultdone)
+        {
+            float offsetX = Mathf.Sin(Time.time * shakeSpeed) * shakeAmount;
+            float offsetY = Mathf.Cos(Time.time * shakeSpeed) * shakeAmount;
+
+            obj.transform.localPosition = originalPos + new Vector3(offsetX, offsetY, 0);
+
+            yield return null;
+        }
+
+       
+        obj.transform.localPosition = originalPos;
+    }
+
 }
