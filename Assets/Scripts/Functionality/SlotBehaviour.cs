@@ -757,9 +757,9 @@ public class SlotBehaviour : MonoBehaviour
         }
         else
         {
-            ActivateGamble();
-            if (IsTurboOn) yield return new WaitForSeconds(1f);
-            else yield return new WaitForSeconds(2f);                                   // changes
+           // ActivateGamble();
+            if (IsTurboOn) yield return new WaitForSeconds(0.2f);
+            else yield return new WaitForSeconds(1f);                                   // changes
             IsSpinning = false;
         }
     }

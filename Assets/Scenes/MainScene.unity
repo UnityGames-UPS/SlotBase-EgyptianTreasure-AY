@@ -3541,7 +3541,7 @@ MonoBehaviour:
   m_fontSize: 40
   m_fontSizeBase: 40
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 16
@@ -10271,7 +10271,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotManager: {fileID: 2046803210}
   uiManager: {fileID: 377874625}
-  testToken: 6c7cecd6bc164623993a7fd8fd5530aa
+  testToken: 943172b898da474e8d32e2f68bfce021
   JSManager: {fileID: 1671351895}
   TestSocketURI: http://localhost:5000/
 --- !u!1 &502968745
