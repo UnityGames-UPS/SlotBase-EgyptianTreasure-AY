@@ -253,13 +253,16 @@ public class SocketIOManager : MonoBehaviour
 
     internal void CloseSocket()
     {
-        SendDataWithNamespace("EXIT");
+        SendDataWithNamespace("game:exit");
+#if UNITY_WEBGL && !UNITY_EDITOR
+    JSManager.SendCustomMessage("OnExit");
+#endif
     }
 
     internal void ReactNativeCallOnFailedToConnect() //BackendChanges
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-    JSManager.SendCustomMessage("onExit");
+    JSManager.SendCustomMessage("OnExit");
 #endif
     }
 
