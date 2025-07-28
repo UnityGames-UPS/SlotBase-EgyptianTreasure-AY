@@ -68,6 +68,11 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject DisconnectPopup_Object;
 
+    [Header("Reconnection Popup")]   
+    [SerializeField]
+    private GameObject ReconnectPopup_Object;
+
+    
     [Header("LowBalance Popup")]
     [SerializeField]
     private Button LBExit_Button;
@@ -113,6 +118,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private AudioController audioController;
     [SerializeField] private SlotBehaviour slotBehaviour;
+
+    [SerializeField] internal GameObject Raycastblocker;
 
 
     private void Start()
@@ -180,7 +187,7 @@ public class UIManager : MonoBehaviour
         OpenPopup(LBPopup_Object);
     }
 
-    internal void DisconnectionPopup(bool isReconnection)
+    internal void DisconnectionPopup()
     {
         if (!isExit)
         {
@@ -271,7 +278,22 @@ public class UIManager : MonoBehaviour
             audioController.ToggleMute(true, "bg");
         }
     }
+    internal void ReconnectionPopup()
+    {
+        OpenPopup(ReconnectPopup_Object);
+    }
 
+    internal void CheckAndClosePopups()
+    {
+        if (ReconnectPopup_Object.activeInHierarchy)
+        {
+            ClosePopup(ReconnectPopup_Object);
+        }
+        if (DisconnectPopup_Object.activeInHierarchy)
+        {
+            ClosePopup(DisconnectPopup_Object);
+        }
+    }
     private void ToggleSound()
     {
         isSound = !isSound;

@@ -61,7 +61,7 @@ public class BonusLevelCalculation : MonoBehaviour
         slotBehaviour.updateBalance();
         bonusGame.SetActive(false);
         slotBehaviour.CheckPopups = false;
-        obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y +0.5f, obj.transform.position.z);
+        obj.transform.localPosition = new Vector3(obj.transform.localPosition.x, obj.transform.localPosition.y +0.5f, obj.transform.localPosition.z);
     }
 
     private void Initialize()
@@ -105,7 +105,7 @@ public class BonusLevelCalculation : MonoBehaviour
             
             text.gameObject.SetActive(true);
             text.text = "GAME OVER";
-            text.gameObject.transform.position = new Vector3(text.gameObject.transform.position.x, text.gameObject.transform.position.y - 0.5f, text.gameObject.transform.position.z);
+            text.gameObject.transform.localPosition = new Vector3(text.gameObject.transform.localPosition.x, text.gameObject.transform.localPosition.y - 0.5f, text.gameObject.transform.localPosition.z);
             text.gameObject.transform.GetChild(0).gameObject.SetActive(false);
             btn.gameObject.SetActive(false);
 

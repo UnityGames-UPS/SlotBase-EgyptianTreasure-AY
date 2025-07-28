@@ -766,6 +766,7 @@ public class SlotBehaviour : MonoBehaviour
 
     internal void CheckWinPopups()
     {
+        Debug.Log("bhdhfgsad  ---====" + currentTotalBet + "hsgfhds    sudhfij   " + SocketManager.ResultData.payload.winAmount);
         if (SocketManager.ResultData.payload.winAmount >= currentTotalBet * 10 && SocketManager.ResultData.payload.winAmount < currentTotalBet * 15)
         {
             uiManager.PopulateWin(1, SocketManager.ResultData.payload.winAmount);
@@ -891,7 +892,7 @@ public class SlotBehaviour : MonoBehaviour
 
     internal void CallCloseSocket()
     {
-        SocketManager.CloseSocket();
+        StartCoroutine(SocketManager.CloseSocket());
     }
 
     internal void CheckBonusGame()
