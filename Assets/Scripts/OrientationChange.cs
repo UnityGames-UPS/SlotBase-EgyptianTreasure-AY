@@ -6,59 +6,66 @@ using System.Collections;
 public class OrientationChange : MonoBehaviour
 {
     [SerializeField] private RectTransform UIWrapper;
-    [SerializeField] private Image[] targetImages;
-    [SerializeField] private float rotationDuration = 0.5f;
+    [SerializeField] private CanvasScaler CanvasScaler;
+    [SerializeField] private float MatchWidth = 0.25f;
+    [SerializeField] private float MatchHeight = 1f;
+    [SerializeField] private float PortraitMatchWandH = 0.5f;
+    [SerializeField] private float transitionDuration = 0.5f;
+    [SerializeField] private float waitForRotation = 1f;
 
+    private Vector2 ReferenceAspect;
+    private Tween matchTween;
+    private Tween rotationTween;
+    private Coroutine rotationRoutine;
     private bool isLandscape;
+    private void Awake()
+    {
+        ReferenceAspect = CanvasScaler.referenceResolution;
+    }
 
     void SwitchDisplay(string dimensions)
     {
-        StartCoroutine(RotateAndResize(dimensions));
+        if (rotationRoutine != null) StopCoroutine(rotationRoutine);
+        rotationRoutine = StartCoroutine(RotationCoroutine(dimensions));
     }
 
-    IEnumerator RotateAndResize(string dimensions)
+    IEnumerator RotationCoroutine(string dimensions)
     {
+        yield return new WaitForSecondsRealtime(waitForRotation);
         string[] parts = dimensions.Split(',');
-        if (parts.Length != 2) yield break;
-
-        int width = int.Parse(parts[0]);
-        int height = int.Parse(parts[1]);
-        isLandscape = width > height;
-
-        // Rotate the UI
-        Quaternion targetRot = isLandscape ? Quaternion.identity : Quaternion.Euler(0, 0, -90);
-        UIWrapper.DORotate(targetRot.eulerAngles, rotationDuration);
-
-        yield return new WaitForSeconds(rotationDuration);
-
-        // Directly set image sizes
-        foreach (Image img in targetImages)
+        if (parts.Length == 2 && int.TryParse(parts[0], out int width) && int.TryParse(parts[1], out int height) && width > 0 && height > 0)
         {
-            if (img == null) continue;
+            Debug.Log($"Unity: Received Dimensions - Width: {width}, Height: {height}");
 
-            RectTransform rt = img.rectTransform;
+            isLandscape = width > height;
 
-            // Remove all anchors and center
-            rt.anchorMin = new Vector2(0.5f, 0.5f);
-            rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
+            Quaternion targetRotation = isLandscape ? Quaternion.identity : Quaternion.Euler(0, 0, -90);
+            if (rotationTween != null && rotationTween.IsActive()) rotationTween.Kill();
+            rotationTween = UIWrapper.DOLocalRotateQuaternion(targetRotation, transitionDuration).SetEase(Ease.OutCubic);
 
-            // Set direct pixel dimensions
-            rt.sizeDelta = isLandscape ?
-                new Vector2(width, height) :
-                new Vector2(height, width); // Swap for portrait
+            float currentAspectRatio = isLandscape ? (float)width / height : (float)height / width;
+            float referenceAspectRatio = ReferenceAspect.x / ReferenceAspect.y;
+
+            float targetMatch = isLandscape ? (currentAspectRatio > referenceAspectRatio ? MatchHeight : MatchWidth) : PortraitMatchWandH;
+            if (matchTween != null && matchTween.IsActive()) matchTween.Kill();
+            matchTween = DOTween.To(() => CanvasScaler.matchWidthOrHeight, x => CanvasScaler.matchWidthOrHeight = x, targetMatch, transitionDuration).SetEase(Ease.InOutQuad);
+
+            Debug.Log($"matchWidthOrHeight set to: {targetMatch}");
         }
-
-        Debug.Log($"Set all images to: {(isLandscape ? $"{width}x{height}" : $"{height}x{width}")}");
+        else
+        {
+            Debug.LogWarning("Unity: Invalid format received in SwitchDisplay");
+        }
     }
+
 
 #if UNITY_EDITOR
-    private void Update()
+  private void Update()
+  {
+    if (Input.GetKeyDown(KeyCode.Space))
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            SwitchDisplay($"{Screen.width},{Screen.height}");
-        }
+      SwitchDisplay(Screen.width + "," + Screen.height);  
     }
+  }
 #endif
 }

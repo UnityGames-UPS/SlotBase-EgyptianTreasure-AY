@@ -34,7 +34,7 @@ public class SocketIOManager : MonoBehaviour
     private string testToken;
 
     internal bool isResultdone = false;
-        
+
     protected string gameID = "SL-EGT";
     // protected string gameID = "";
     [SerializeField] internal JSFunctCalls JSManager;
@@ -44,8 +44,8 @@ public class SocketIOManager : MonoBehaviour
 
 
     protected string SocketURI = null;
-   // protected string TestSocketURI = "https://game-crm-rtp-backend.onrender.com/";        //dev port
-    [SerializeField]protected string TestSocketURI = "";     
+    // protected string TestSocketURI = "https://game-crm-rtp-backend.onrender.com/";        //dev port
+    [SerializeField] protected string TestSocketURI = "";
     //protected string TestSocketURI = "https://916smq0d-5001.inc1.devtunnels.ms/";           //anushaka port
 
     internal bool isLoaded = false;
@@ -87,7 +87,7 @@ public class SocketIOManager : MonoBehaviour
         var data = JsonUtility.FromJson<AuthTokenData>(jsonData);
         SocketURI = data.socketURL;
         myAuth = data.cookie;
-        nameSpace=data.nameSpace; //BackendChanges
+        nameSpace = data.nameSpace; //BackendChanges
         // Proceed with connecting to the server using myAuth and socketURL
     }
 
@@ -111,7 +111,7 @@ public class SocketIOManager : MonoBehaviour
             return new
             {
                 token = testToken,
-               
+
             };
         };
         options.Auth = authFunction;
@@ -141,7 +141,7 @@ public class SocketIOManager : MonoBehaviour
             return new
             {
                 token = myAuth,
-                
+
             };
         };
         options.Auth = authFunction;
@@ -222,7 +222,11 @@ public class SocketIOManager : MonoBehaviour
         Debug.Log($"⏱️ Updated last pong time: {lastPongTime}");
         Debug.Log($"📦 Pong payload: {data}");
     } //Back2 end
-
+    void CloseGame()
+    {
+        Debug.Log("Unity: Closing Game");
+        StartCoroutine(CloseSocket());
+    }
 
     void OnResult(string data)
     {
@@ -413,9 +417,9 @@ public class SocketIOManager : MonoBehaviour
                 }
             case "gambleInit":
                 {
-                    
+
                     isResultdone = true;
-                   
+
                     break;
                 }
             case "gambleDraw":
@@ -443,7 +447,7 @@ public class SocketIOManager : MonoBehaviour
 
                     bonusData = myData;
                     PlayerData = myData.player;
-                  //  bonusController.WaitForBonusResult = false;      //change
+                    //  bonusController.WaitForBonusResult = false;      //change
                     break;
                 }
             case "ExitUser":
@@ -453,7 +457,7 @@ public class SocketIOManager : MonoBehaviour
                         Debug.Log("Dispose my Socket");
                         this.manager.Close();
                     }
-                   // Application.ExternalCall("window.parent.postMessage", "onExit", "*");
+                    // Application.ExternalCall("window.parent.postMessage", "onExit", "*");
 #if UNITY_WEBGL && !UNITY_EDITOR
                         JSManager.SendCustomMessage("onExit");
 #endif
@@ -466,7 +470,7 @@ public class SocketIOManager : MonoBehaviour
     {
         PlayerData = myData.player;
         ResultData.payload.winAmount = myData.payload.winAmount;
-       
+
         slotManager.updateBalance();
     }
 
@@ -482,7 +486,7 @@ public class SocketIOManager : MonoBehaviour
         slotManager.SetInitialUI(BonusList);
 
         isLoaded = true;
-      //  Application.ExternalCall("window.parent.postMessage", "OnEnter", "*");
+        //  Application.ExternalCall("window.parent.postMessage", "OnEnter", "*");
 #if UNITY_WEBGL && !UNITY_EDITOR
         JSManager.SendCustomMessage("OnEnter");
 #endif

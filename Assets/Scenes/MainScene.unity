@@ -25211,7 +25211,7 @@ GameObject:
   - component: {fileID: 1122509191}
   - component: {fileID: 1122509190}
   m_Layer: 5
-  m_Name: RecinectionPopup
+  m_Name: Reconnecting.......Popup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37282,8 +37282,8 @@ RectTransform:
   - {fileID: 1368522219}
   - {fileID: 1622748955}
   - {fileID: 780094293}
-  - {fileID: 932883407}
   - {fileID: 1122509189}
+  - {fileID: 932883407}
   m_Father: {fileID: 1485219722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -49932,8 +49932,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIWrapper: {fileID: 1485219722}
-  targetImages: []
-  rotationDuration: 0.5
+  CanvasScaler: {fileID: 0}
+  MatchWidth: 0
+  MatchHeight: 1
+  PortraitMatchWandH: 0.5
+  transitionDuration: 0.2
+  waitForRotation: 0.2
 --- !u!224 &4508728964272511840
 RectTransform:
   m_ObjectHideFlags: 0
