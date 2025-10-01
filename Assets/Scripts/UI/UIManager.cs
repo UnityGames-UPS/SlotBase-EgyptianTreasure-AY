@@ -68,11 +68,11 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject DisconnectPopup_Object;
 
-    [Header("Reconnection Popup")]   
+    [Header("Reconnection Popup")]
     [SerializeField]
     private GameObject ReconnectPopup_Object;
 
-    
+
     [Header("LowBalance Popup")]
     [SerializeField]
     private Button LBExit_Button;
@@ -141,7 +141,7 @@ public class UIManager : MonoBehaviour
 
         if (Previous_Button) Previous_Button.interactable = false;
 
-        if (Pagination_Text) Pagination_Text.text = paginationCounter + "  3";
+        if (Pagination_Text) Pagination_Text.text = paginationCounter + "  4";
 
         if (SoundButton) SoundButton.onClick.RemoveAllListeners();
         if (SoundButton) SoundButton.onClick.AddListener(delegate { OpenPopup(SettingsPopup_Object); });
@@ -228,11 +228,11 @@ public class UIManager : MonoBehaviour
             if (Win_Text) Win_Text.text = initAmount.ToString("f3");
         });
 
-       WinTween = DOVirtual.DelayedCall(6f, () =>
-        {
-            ClosePopup(WinPopup_Object);
-            slotBehaviour.CheckPopups = false;
-        });
+        WinTween = DOVirtual.DelayedCall(6f, () =>
+         {
+             ClosePopup(WinPopup_Object);
+             slotBehaviour.CheckPopups = false;
+         });
     }
 
     private void OnClickMegaWinHide()
@@ -323,12 +323,12 @@ public class UIManager : MonoBehaviour
             if (Previous_Button) Previous_Button.interactable = true;
             paginationCounter++;
             //if (Info_Image) Info_Image.sprite = Info_Sprites[paginationCounter - 1];
-            pageList[paginationCounter-1].SetActive(true);
-            if(paginationCounter == 3)
+            pageList[paginationCounter - 1].SetActive(true);
+            if (paginationCounter == 4)
             {
                 if (Next_Button) Next_Button.interactable = false;
             }
-            if (Pagination_Text) Pagination_Text.text = paginationCounter + "  3";
+            if (Pagination_Text) Pagination_Text.text = paginationCounter + "  4";
 
         }
         else
@@ -342,10 +342,10 @@ public class UIManager : MonoBehaviour
             {
                 if (Previous_Button) Previous_Button.interactable = false;
             }
-            if (Pagination_Text) Pagination_Text.text = paginationCounter + "  3";
+            if (Pagination_Text) Pagination_Text.text = paginationCounter + "  4";
         }
     }
-    internal void InitialiseUIData( Paylines symbolsText)
+    internal void InitialiseUIData(Paylines symbolsText)
     {
         PopulateSymbolsPayout(symbolsText);
     }
@@ -360,7 +360,7 @@ public class UIManager : MonoBehaviour
                     string text = null;
                     if (paylines.symbols[i].multiplier[0] != 0)
                     {
-                        text += "5x - " + paylines.symbols[i].multiplier[0]+"x";
+                        text += "5x - " + paylines.symbols[i].multiplier[0] + "x";
                     }
                     if (paylines.symbols[i].multiplier[1] != 0)
                     {
@@ -422,6 +422,6 @@ public class UIManager : MonoBehaviour
     private void CallOnExitFunction()
     {
         slotBehaviour.CallCloseSocket();
-        Application.ExternalCall("window.parent.postMessage", "onExit", "*");
+        // Application.ExternalCall("window.parent.postMessage", "onExit", "*");
     }
 }
