@@ -60,8 +60,11 @@ public class OrientationChange : MonoBehaviour
       matchTween = DOTween.To(() => CanvasScaler.matchWidthOrHeight, x => CanvasScaler.matchWidthOrHeight = x, targetMatch, transitionDuration).SetEase(Ease.InOutQuad);
 
       // 🛡 TABLET / IPAD SAFE SCALE
-      float aspectRatio = (float)width / height;
-      bool isTablet = aspectRatio < 1.4f && aspectRatio > 1.2f;  // Detect 4:3 or near
+      float aspect = (float)Screen.height / Screen.width;
+      aspect = Mathf.Max(aspect, 1f / aspect);  // Normalize (always >= 1)
+
+      // Tablet if aspect ratio is around 4:3 or slightly wider (1.3 to 1.6)
+      bool isTablet = aspect >= 1.3f && aspect <= 1.6f;
 
       float targetScale = isTablet ? tabletScale : 1f;
 

@@ -50364,7 +50364,7 @@ MonoBehaviour:
   PortraitMatchWandH: 0.5
   transitionDuration: 0.2
   waitForRotation: 0.2
-  tabletScale: 0.5
+  tabletScale: 0.9
 --- !u!224 &4508728964272511840
 RectTransform:
   m_ObjectHideFlags: 0

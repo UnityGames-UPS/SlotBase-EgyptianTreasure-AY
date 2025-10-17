@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "EgyptianTreasure(Old).sln"
+    "dotnet.defaultSolution": "SlotBase-EgyptianTreasure-AY.sln"
 }
