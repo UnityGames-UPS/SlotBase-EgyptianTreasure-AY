@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 {
     [Space]
     [SerializeField] SocketIOManager socketManager;
+    [SerializeField] SlotBehaviour slotManager;
 
     [Header("Menu UI")]
     [SerializeField]
@@ -349,51 +350,77 @@ public class UIManager : MonoBehaviour
     {
         PopulateSymbolsPayout(symbolsText);
     }
-
+    int xp = 0;
     private void PopulateSymbolsPayout(Paylines paylines)
     {
-        for (int i = 0; i < SymbolsText.Length; i++)
+        double multiplyer = socketManager.InitialData.bets[slotManager.BetCounter];
+        for (int i = 0; i < SymbolsText.Length - 1; i++)
         {
-            switch (paylines.symbols[i].name)
+            if (i == 0 || i == 3 || i == 6)
             {
-                case "0":
-                    string text = null;
-                    if (paylines.symbols[i].multiplier[0] != 0)
-                    {
-                        text += "5x - " + paylines.symbols[i].multiplier[0] + "x";
-                    }
-                    if (paylines.symbols[i].multiplier[1] != 0)
-                    {
-                        text += "\n4x - " + paylines.symbols[i].multiplier[1] + "x";
-                    }
-                    if (paylines.symbols[i].multiplier[2] != 0)
-                    {
-                        text += "\n3x - " + paylines.symbols[i].multiplier[2] + "x";
-                    }
-                    if (SymbolsText[0]) SymbolsText[0].text = text;
-                    if (SymbolsText[1]) SymbolsText[1].text = text;
-                    break;
-                case "4":
-                    text = null;
-                    if (paylines.symbols[i].multiplier[0] != 0)
-                    {
-                        text += "5x - " + paylines.symbols[i].multiplier[0] + "x";
-                    }
-                    if (paylines.symbols[i].multiplier[1] != 0)
-                    {
-                        text += "\n4x - " + paylines.symbols[i].multiplier[1] + "x";
-                    }
-                    if (paylines.symbols[i].multiplier[2] != 0)
-                    {
-                        text += "\n3x - " + paylines.symbols[i].multiplier[2] + "x";
-                    }
-                    if (SymbolsText[2]) SymbolsText[2].text = text;
-                    if (SymbolsText[3]) SymbolsText[3].text = text;
-                    if (SymbolsText[4]) SymbolsText[4].text = text;
-                    if (SymbolsText[5]) SymbolsText[5].text = text;
-                    break;
+                xp++;
+                // continue;
             }
+
+            string text = null;
+            if (paylines.symbols[xp].multiplier[0] != 0)
+            {
+                text += "5x - " + paylines.symbols[xp].multiplier[0] * multiplyer;
+            }
+            if (paylines.symbols[xp].multiplier[1] != 0)
+            {
+                text += "\n4x - " + paylines.symbols[xp].multiplier[1] * multiplyer;
+            }
+            if (paylines.symbols[xp].multiplier[2] != 0)
+            {
+                text += "\n3x - " + paylines.symbols[xp].multiplier[2] * multiplyer;
+            }
+            if (SymbolsText[i]) SymbolsText[i].text = text;
+            xp++;
         }
+
+        // for (int i = 0; i < SymbolsText.Length; i++)
+        // {
+        //     switch (paylines.symbols[i].name)
+        //     {
+        //         case "0":
+        //             string text = null;
+        //             if (paylines.symbols[i].multiplier[0] != 0)
+        //             {
+        //                 text += "5x - " + paylines.symbols[i].multiplier[0] + "x";
+        //             }
+        //             if (paylines.symbols[i].multiplier[1] != 0)
+        //             {
+        //                 text += "\n4x - " + paylines.symbols[i].multiplier[1] + "x";
+        //             }
+        //             if (paylines.symbols[i].multiplier[2] != 0)
+        //             {
+        //                 text += "\n3x - " + paylines.symbols[i].multiplier[2] + "x";
+        //             }
+        //             if (SymbolsText[0]) SymbolsText[0].text = text;
+        //             if (SymbolsText[1]) SymbolsText[1].text = text;
+        //             break;
+        //         case "4":
+        //             text = null;
+        //             if (paylines.symbols[i].multiplier[0] != 0)
+        //             {
+        //                 text += "5x - " + paylines.symbols[i].multiplier[0] + "x";
+        //             }
+        //             if (paylines.symbols[i].multiplier[1] != 0)
+        //             {
+        //                 text += "\n4x - " + paylines.symbols[i].multiplier[1] + "x";
+        //             }
+        //             if (paylines.symbols[i].multiplier[2] != 0)
+        //             {
+        //                 text += "\n3x - " + paylines.symbols[i].multiplier[2] + "x";
+        //             }
+        //             if (SymbolsText[2]) SymbolsText[2].text = text;
+        //             if (SymbolsText[3]) SymbolsText[3].text = text;
+        //             if (SymbolsText[4]) SymbolsText[4].text = text;
+        //             if (SymbolsText[5]) SymbolsText[5].text = text;
+        //             break;
+        //     }
+        // }
 
         for (int i = 0; i < paylines.symbols.Count; i++)
         {

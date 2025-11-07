@@ -164,6 +164,24 @@ public class SlotBehaviour : MonoBehaviour
 
     protected int Lines = 20;
 
+
+
+    public static List<List<int>> initialGrid = new List<List<int>>()
+    {
+        new List<int>() { 8, 1, 7},
+        new List<int>() { 10, 8, 7},
+        new List<int>() { 10, 7, 10},
+        new List<int>() { 10, 8, 7},
+        new List<int>() { 8, 10, 7}
+    };
+    public static List<List<int>> initialAnimGrid = new List<List<int>>()
+    {
+        new List<int>() { 10, 10, 10},
+        new List<int>() { 10, 10, 10},
+        new List<int>() { 10, 10, 10},
+        new List<int>() { 10, 10, 10},
+        new List<int>() { 10, 10, 10}
+    };
     private void Start()
     {
         IsAutoSpin = false;
@@ -202,8 +220,37 @@ public class SlotBehaviour : MonoBehaviour
 
         tweenHeight = (15 * IconSizeFactor) - 280;
         turboOriginalSprite = Turbo_Button.GetComponent<Image>().sprite;
+
+
+        //  shuffleInitialMatrix();
     }
 
+
+
+    internal void shuffleInitialMatrix()
+    {
+        // Debug.Log("Suffling------------------");
+        for (int i = 0; i < Tempimages.Count; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                PopulateAnimationSprites(Tempimages[i].slotImages[j].transform.GetComponent<ImageAnimation>(), initialGrid[i][j]);
+                Tempimages[i].slotImages[j].transform.GetComponent<Image>().sprite = myImages[initialGrid[i][j]];
+            }
+        }
+        for (int i = 0; i < Tempimages.Count; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                //  Debug.Log(i + "--------" + initialAnimGrid[i][j] + "----------" + j);
+                if (initialAnimGrid[i][j] > 0)
+                {
+                    // Debug.Log(initialAnimGrid[i][j]);
+                    StartGameAnimation(Tempimages[i].slotImages[j].gameObject, TempBoxScripts[i].boxScripts[j]);
+                }
+            }
+        }
+    }
     private void ToggleAutoSpins(bool isIncrement)
     {
         if (audioController) audioController.PlayButtonAudio();
@@ -581,21 +628,22 @@ public class SlotBehaviour : MonoBehaviour
         audioController.CheckFocusFunction(focus, CheckSpinAudio);
     }
 
-    internal void shuffleInitialMatrix()
-    {
-        for (int i = 0; i < Tempimages.Count; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                int randomIndex = UnityEngine.Random.Range(0, myImages.Length);
-                Tempimages[i].slotImages[j].sprite = myImages[randomIndex];
-            }
-        }
-    }
+    // internal void shuffleInitialMatrix()
+    // {
+    //     for (int i = 0; i < Tempimages.Count; i++)
+    //     {
+    //         for (int j = 0; j < 3; j++)
+    //         {
+    //             int randomIndex = UnityEngine.Random.Range(0, myImages.Length);
+    //             Tempimages[i].slotImages[j].sprite = myImages[randomIndex];
+    //         }
+    //     }
+    // }
 
 
     private IEnumerator TweenRoutine()
     {
+        currentBalance = SocketManager.PlayerData.balance;
         if (currentBalance < currentTotalBet && !IsFreeSpin)
         {
             CompareBalance();
